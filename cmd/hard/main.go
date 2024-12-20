@@ -41,6 +41,7 @@ func init() {
 	rootCmd.AddCommand(downCmd)
 	rootCmd.AddCommand(restartCmd)
 	rootCmd.AddCommand(psCmd)
+	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(bashCmd)
 	rootCmd.AddCommand(laravelCmd)
 	rootCmd.AddCommand(phpCmd)
@@ -48,6 +49,7 @@ func init() {
 	rootCmd.AddCommand(nodeCmd)
 	rootCmd.AddCommand(npmCmd)
 	rootCmd.AddCommand(yarnCmd)
+	rootCmd.AddCommand(updateCmd)
 }
 
 func init() {
@@ -92,6 +94,35 @@ func dockerComposeCmd() *exec.Cmd {
 	}
 
 	return exec.Command("docker", "compose", "-f", dockerComposePath)
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Long:  "Update the Laravel Hard CLI",
+	Short: "Update the Laravel Hard CLI",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Updating Laravel Hard CLI...")
+
+		exec.Command("git", "-C", hardPath, "pull").Run()
+
+		// Drop container images
+		fmt.Println("Drop container images...")
+		dcCmd := dockerComposeCmd()
+		dcCmd.Args = append(dcCmd.Args, "down", "--rmi", "all", "--volumes")
+		dcCmd.Run()
+
+		// Rebuild container images
+		fmt.Println("Rebuild container images...")
+		dcCmd.Args = append(dcCmd.Args, "build", "--no-cache")
+		dcCmd.Run()
+
+		// Start the environment
+		fmt.Println("Starting the environment...")
+		dcCmd.Args = append(dcCmd.Args, "up", "-d")
+		dcCmd.Run()
+
+		fmt.Println("Laravel Hard CLI updated successfully!")
+	},
 }
 
 var upCmd = &cobra.Command{
@@ -140,6 +171,18 @@ var psCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dcCmd := dockerComposeCmd()
 		dcCmd.Args = append(dcCmd.Args, "ps")
+		dcCmd.Stdout = os.Stdout
+		dcCmd.Stderr = os.Stderr
+		dcCmd.Run()
+	},
+}
+
+var buildCmd = &cobra.Command{
+	Use:   "build",
+	Short: "Build the environment",
+	Run: func(cmd *cobra.Command, args []string) {
+		dcCmd := dockerComposeCmd()
+		dcCmd.Args = append(dcCmd.Args, "build")
 		dcCmd.Stdout = os.Stdout
 		dcCmd.Stderr = os.Stderr
 		dcCmd.Run()
@@ -245,6 +288,7 @@ func displayHelp() {
 	fmt.Println("Laravel Hard")
 	fmt.Println()
 	fmt.Printf("%s\n", yellow("docker-compose Commands:"))
+	fmt.Printf("  %s       Build the environment\n", green("hard build"))
 	fmt.Printf("  %s        Start the environment\n", green("hard up"))
 	fmt.Printf("  %s     Start the environment in the background\n", green("hard up -d"))
 	fmt.Printf("  %s      Stop the environment\n", green("hard down"))
@@ -276,5 +320,7 @@ func displayHelp() {
 	fmt.Printf("  %s Run a Yarn command\n", green("hard [project] yarn ..."))
 	fmt.Printf("  %s\n", green("hard awesome-project yarn prod"))
 	fmt.Println()
+	fmt.Printf("%s\n", yellow("Update Commands:"))
+	fmt.Printf("  %s Update the Laravel Hard CLI\n", green("hard update"))
 	os.Exit(0)
 }
