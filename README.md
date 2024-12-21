@@ -1,6 +1,6 @@
 # PHP Hard - Docker Environment
 
-> **Work in Progress**  
+> **Work in Progress**
 > This project is still under development. Some features may be incomplete or subject to change.
 
 > Currently, `Hard` is only supported on Linux. For Windows users, it can be run using WSL (Windows Subsystem for Linux). Mac support has not been tested (I don't have a Mac to test it).
@@ -45,13 +45,12 @@
 
 ## Installation
 
-To get started, you’ll need Docker and Docker Compose installed on your machine. If you haven't already, please follow the installation guides for [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
+To get started, you'll need Docker and Docker Compose installed on your machine. If you haven't already, please follow the installation guides for [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
 Once Docker is set up, run the following command to install `PHP Hard`:
 
 ```bash
-bash <(wget -q -O - https://raw.githubusercontent.com/clebsonsh/hard/refs/heads/main/install.sh)
-```
+bash <(curl -s https://api.github.com/repos/clebsonsh/hard/releases/latest | grep "tag_name" | cut -d '"' -f 4 | xargs -I {} echo "https://raw.githubusercontent.com/clebsonsh/hard/{}/install.sh" | xargs curl -s | bash)
 
 ---
 
@@ -62,7 +61,7 @@ bash <(wget -q -O - https://raw.githubusercontent.com/clebsonsh/hard/refs/heads/
 - `WWW_PATH`: The directory where your projects are located. Default: `~/hard`
   - Any project you create or clone in this directory can be accessed on `*.localhost`.
   - Example: After running `hard laravel new awesome-project`, simply open [http://awesome-project.localhost](http://awesome-project.localhost) and it’ll be ready to go!
-  
+
 - `QUEUE_COMMAND`: Command to run your application queues. Default: `queue:work`
   - Can be changed to `queue:work --tries=3`, for example.
   - If you prefer to run Horizon, you can change it to `horizon`.
