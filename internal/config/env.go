@@ -22,7 +22,7 @@ func InitializeConfig(envPath string) error {
 	homeDir, _ := os.UserHomeDir()
 	HardPath = filepath.Join(homeDir, ".hard")
 	if HardPath == "" {
-		return fmt.Errorf("ERROR: HARD_PATH not set in .env file")
+		return fmt.Errorf("ERROR: HARD is not installed. Please run 'hard install' first")
 	}
 
 	WwwPath = os.Getenv("WWW_PATH")
