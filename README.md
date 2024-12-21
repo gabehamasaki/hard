@@ -45,12 +45,13 @@
 
 ## Installation
 
-To get started, you'll need Docker and Docker Compose installed on your machine. If you haven't already, please follow the installation guides for [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
+To get started, you’ll need Docker and Docker Compose installed on your machine. If you haven't already, please follow the installation guides for [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
 Once Docker is set up, run the following command to install `PHP Hard`:
 
 ```bash
-bash <(curl -s https://api.github.com/repos/clebsonsh/hard/releases/latest | grep "tag_name" | cut -d '"' -f 4 | xargs -I {} echo "https://raw.githubusercontent.com/clebsonsh/hard/{}/install.sh" | xargs curl -s | bash)
+bash <(wget -q -O - https://raw.githubusercontent.com/clebsonsh/hard/refs/heads/main/install.sh)
+```
 
 ---
 
